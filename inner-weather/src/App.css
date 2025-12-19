@@ -1,0 +1,118 @@
+/* src/App.css */
+:root {
+  font-family: 'Fredoka', sans-serif; /* The new cute font! */
+  color: #57534e; /* Warm grey text is softer than black */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.8s ease; /* Slower, dreamier fade */
+}
+
+/* --- Website Header --- */
+.header {
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #78716c;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+  flex: 1; /* Takes up remaining space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3.5rem; /* Big website headline */
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #44403c;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 3rem;
+  opacity: 0.8;
+  max-width: 600px;
+}
+
+/* --- The Mood Bar --- */
+.mood-grid {
+  display: flex;
+  gap: 20px; /* More space for desktop */
+  background: rgba(255, 255, 255, 0.6);
+  padding: 20px;
+  border-radius: 50px; /* Pill shape */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  backdrop-filter: blur(5px); /* Frosty glass effect */
+}
+
+.mood-btn {
+  border: none;
+  background: white;
+  border-radius: 50%; /* Perfect circles */
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Super bouncy */
+  color: #78716c;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.mood-btn span {
+  font-size: 0.9rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+}
+
+.mood-btn:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+
+.mood-btn.selected {
+  transform: scale(1.15);
+  color: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.message-box {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #57534e;
+  animation: floatUp 0.5s ease;
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
