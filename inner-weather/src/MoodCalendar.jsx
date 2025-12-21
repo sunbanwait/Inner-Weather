@@ -17,11 +17,13 @@ const MoodCalendar = ({ moodHistory }) => {
     return moodHistory[dateString];
   };
 
-  const handleDayClick = (day, moodData) => {
+  // UPDATED: Now accepts moodConfig to get the message
+  const handleDayClick = (day, moodData, moodConfig) => {
     if (moodData && moodData.note) {
       setSelectedNote({
         date: `${today.toLocaleString('default', { month: 'long' })} ${day}`,
-        text: moodData.note
+        text: moodData.note,
+        moodMessage: moodConfig ? moodConfig.message : '' // Get the description
       });
     } else {
       setSelectedNote(null);
@@ -32,7 +34,6 @@ const MoodCalendar = ({ moodHistory }) => {
     <div className="calendar-container">
       <h2>{today.toLocaleString('default', { month: 'long' })} {currentYear}</h2>
       
-      {/* THE GRID */}
       <div className="calendar-grid">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
           <div key={d} className="calendar-header">{d}</div>
@@ -46,11 +47,15 @@ const MoodCalendar = ({ moodHistory }) => {
           const moodData = getMoodForDate(day);
           const moodConfig = moodData ? MOODS.find(m => m.value === moodData.value) : null;
           
+          // UPDATED: Get the specific icon component if data exists
+          const IconComponent = moodConfig ? moodConfig.icon : null;
+
           return (
             <div 
               key={day} 
               className={`calendar-day ${moodData ? 'has-data' : ''}`}
-              onClick={() => handleDayClick(day, moodData)}
+              // UPDATED: Pass moodConfig to the handler
+              onClick={() => handleDayClick(day, moodData, moodConfig)}
               style={{
                 backgroundColor: moodConfig ? moodConfig.color : 'transparent',
                 border: moodConfig ? `2px solid ${moodConfig.highlight}` : '1px solid #f0f0f0',
@@ -58,17 +63,25 @@ const MoodCalendar = ({ moodHistory }) => {
               }}
             >
               <span className="day-number">{day}</span>
-              {/* Optional tiny dot to show there is a note */}
-              {moodData?.note && <div className="note-dot" style={{background: moodConfig.highlight}}></div>}
+              
+              {/* UPDATED: Display the Icon instead of the dot */}
+              {IconComponent && (
+                <div className="calendar-icon-wrapper">
+                  <IconComponent size={20} color={moodConfig.highlight} />
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* SECTION TO SHOW THE CLICKED NOTE */}
+      {/* UPDATED: Note Display Section */}
       {selectedNote && (
         <div className="note-display">
-          <strong>{selectedNote.date}:</strong>
+          <strong>
+             {/* Matches your requested format: DATE • MOOD */}
+             {selectedNote.date} &bull; {selectedNote.moodMessage}
+          </strong>
           <p>"{selectedNote.text}"</p>
         </div>
       )}

@@ -64,7 +64,7 @@ h1 {
   font-family: 'Gaegu', cursive;
   font-size: 4.5rem; 
   font-weight: 400; 
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   margin-top: 0.5rem; 
   color: #44403c;
   line-height: 1.2;
@@ -73,6 +73,7 @@ h1 {
 .subtitle {
   font-family: 'Gaegu', cursive;
   font-size: 1.8rem;
+  margin-top: 0.5rem;
   margin-bottom: 1.5rem; 
   opacity: 0.8;
 }
@@ -82,12 +83,19 @@ h1 {
   display: flex;
   gap: 15px;
   background: rgba(255, 255, 255, 0.4);
-  padding: 30px;
+  
+  /* CHANGED: Reduced padding from 30px to 20px for a tighter fit */
+  padding: 20px; 
+  
   border-radius: 60px;
   flex-wrap: wrap; 
   justify-content: center;
   margin-bottom: 1.5rem;
-  width: 100%; 
+  
+  /* CHANGED: Swapped width: 100% for fit-content so it hugs the buttons */
+  width: fit-content; 
+  max-width: 100%; 
+  
   box-sizing: border-box;
 }
 
@@ -136,6 +144,9 @@ h1 {
   align-items: center;
   gap: 15px;
   animation: slideUp 0.5s ease;
+  
+  /* CHANGED: Added margin-top to push it down "ever so slightly" */
+  margin-top: 15px; 
 }
 
 .mood-note {
@@ -207,6 +218,7 @@ h1 {
   font-size: 1rem;
   color: #a8a29e;
   margin-bottom: 10px;
+  margin-top: 10px;
   text-transform: uppercase;
 }
 
@@ -216,13 +228,32 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  /* CHANGED: 400 makes it normal (not bold) */
+  justify-content: center; /* Keeps them centered vertically */
+  font-size: 1.1rem; /* Slightly smaller number to fit the icon */
   font-weight: 500; 
   color: #57534e;
   position: relative;
   transition: transform 0.1s;
+  gap: 2px; /* Adds tiny space between number and icon */
+}
+
+/* Add this new class for the icon inside the box */
+.calendar-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+/* Update .note-display strong to look correct with the new format */
+.note-display strong {
+  display: block;
+  font-size: 1rem;
+  color: #a8a29e;
+  margin-bottom: 8px; /* Little more space before the note text */
+  text-transform: uppercase;
+  font-family: 'Fredoka', sans-serif;
+  letter-spacing: 0.5px;
 }
 
 .calendar-day.has-data:hover {
