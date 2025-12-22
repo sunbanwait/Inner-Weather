@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MOODS } from './moodConfig'
 import { Wind, Calendar as CalendarIcon, Home } from 'lucide-react'
 import MoodCalendar from './MoodCalendar'
@@ -14,6 +14,10 @@ function App() {
   const [currentMood, setCurrentMood] = useState(null);
   const [note, setNote] = useState(''); 
   const [view, setView] = useState('log');
+
+  useEffect(() => {
+    localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+  }, [moodHistory]);
 
   const handleMoodSelect = (mood) => {
     setCurrentMood(mood);
@@ -34,10 +38,37 @@ function App() {
     };
 
     setMoodHistory(newHistory);
-    localStorage.setItem('moodHistory', JSON.stringify(newHistory));
-    
     setNote('');
     setView('history');
+  };
+
+  // --- CYCLING LOGIC ---
+  const handleCalendarClick = (dateString) => {
+    const currentEntry = moodHistory[dateString];
+    const currentValue = currentEntry ? currentEntry.value : null;
+
+    // Cycle: Sunny(5) -> Partly(4) -> Cloud(3) -> Rain(2) -> Storm(1) -> Empty(null)
+    const cycleValues = [...MOODS.map(m => m.value), null];
+    
+    // Find current spot in the cycle. If not found (undefined), it returns -1
+    const currentIndex = cycleValues.indexOf(currentValue);
+    
+    // Move to next spot. If index was -1, it becomes 0 (Start of cycle)
+    const nextValue = cycleValues[(currentIndex + 1) % cycleValues.length];
+
+    const newHistory = { ...moodHistory };
+
+    if (nextValue === null) {
+      delete newHistory[dateString]; // Remove entry if cycling to "Empty"
+    } else {
+      newHistory[dateString] = {
+        ...currentEntry, 
+        value: nextValue,
+        note: currentEntry?.note || '' // Keep the note if it exists
+      };
+    }
+
+    setMoodHistory(newHistory);
   };
 
   return (
@@ -47,7 +78,7 @@ function App() {
     >
       <header className="header">
         <div className="logo">
-          <Wind size={24} />
+          <Wind size={20} />
           <span>InnerWeather</span>
         </div>
       </header>
@@ -58,11 +89,7 @@ function App() {
         {view === 'log' && (
           <div className="fade-in">
             <h1>How are you feeling?</h1>
-            <p className="subtitle">
-              Select your weather icon and write a small note.
-            </p>
             
-            {/* 1. Mood Icons */}
             <div className="mood-grid">
               {MOODS.map((mood) => {
                 const Icon = mood.icon;
@@ -84,12 +111,10 @@ function App() {
               })}
             </div>
 
-            {/* 2. THE RESTORED MESSAGE (Cute description) */}
             <div className={`mood-message ${currentMood ? 'visible' : ''}`}>
                {currentMood ? currentMood.message : "..."}
             </div>
 
-            {/* 3. Text Area & Save Button */}
             <div className="input-area">
               <textarea 
                 placeholder="Notes on your forecast..."
@@ -111,11 +136,17 @@ function App() {
 
         {/* --- VIEW 2: PAST FORECASTS --- */}
         {view === 'history' && (
-          <div className="fade-in calendar-wrapper">
+          <div className="fade-in">
+             {/* FIXED: Title is back! */}
              <h1>Past Forecasts</h1>
-             <p className="subtitle">Click a day to read your notes.</p>
-             <div className="calendar-section">
-                <MoodCalendar moodHistory={moodHistory} />
+             
+             <div className="calendar-wrapper">
+                <div className="calendar-section">
+                   <MoodCalendar 
+                     moodHistory={moodHistory} 
+                     onDateClick={handleCalendarClick} 
+                   />
+                </div>
              </div>
           </div>
         )}

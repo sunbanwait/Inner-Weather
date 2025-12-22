@@ -28,7 +28,6 @@
 .logo {
   font-family: 'Fredoka', sans-serif; 
   font-weight: 600;
-  /* FIXED: Smaller logo size */
   font-size: 1rem; 
   display: flex;
   align-items: center;
@@ -54,13 +53,11 @@ h1 {
   font-size: 2.4rem; 
   font-weight: 400; 
   margin-bottom: 20px;
-  /* FIXED: Added margin-top to move the title down */
   margin-top: 20px; 
   color: #44403c;
   line-height: 1.1;
 }
 
-/* FIXED: Hidden completely to reduce clutter */
 .subtitle {
   display: none; 
 }
@@ -68,12 +65,10 @@ h1 {
 /* --- Mood Buttons --- */
 .mood-grid {
   display: flex;
-  /* FIXED: Gap adjusts to fit width */
   gap: 12px; 
   background: rgba(255, 255, 255, 0.4);
   padding: 15px; 
   border-radius: 30px;
-  /* FIXED: "nowrap" forces them to stay on one line */
   flex-wrap: nowrap; 
   justify-content: center;
   align-items: center;
@@ -85,10 +80,9 @@ h1 {
 .mood-btn {
   border: none;
   border-radius: 18px;
-  /* FIXED: Slightly smaller to guarantee 5 fit in a row */
   width: 58px; 
   height: 58px; 
-  flex-shrink: 0; /* Prevents buttons from getting squished */
+  flex-shrink: 0; 
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -108,13 +102,11 @@ h1 {
   z-index: 10;
 }
 
-/* --- The "Cozy and calm" Text --- */
+/* --- Mood Message --- */
 .mood-message {
   font-family: 'Gaegu', cursive;
   font-size: 1.4rem;
   color: #57534e;
-  /* FIXED: We give this a fixed height so the space is "reserved" */
-  /* This prevents the jump/clutter when text appears */
   height: 30px; 
   margin-bottom: 10px;
   display: flex;
@@ -132,7 +124,6 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  /* FIXED: Removed slide animation to make it feel snappier/less cluttered */
   margin-top: 0;
 }
 
@@ -168,23 +159,150 @@ h1 {
 .save-btn:hover { transform: scale(1.05); background: #292524; }
 .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* --- CALENDAR SECTION --- */
-.calendar-wrapper { width: 100%; display: flex; flex-direction: column; }
-.calendar-section { width: 100%; background: white; padding: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); font-family: 'Fredoka', sans-serif; box-sizing: border-box; }
-.calendar-section h2 { font-size: 1.4rem; margin: 0 0 10px 0; color: #57534e; text-align: center; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 10px; }
-.calendar-header { font-weight: 600; font-size: 0.7rem; color: #a8a29e; margin-bottom: 5px; text-transform: uppercase; }
-.calendar-day { aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; color: #57534e; position: relative; transition: transform 0.1s; }
-.calendar-icon-wrapper { transform: scale(0.7); margin-top: -2px; }
-.calendar-day.has-data:hover { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0,0,0,0.1); z-index: 10; }
+/* --- CALENDAR SECTION (UPDATED) --- */
+.calendar-wrapper { 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.calendar-section { 
+  width: 100%; 
+  background: white; 
+  padding: 15px; 
+  border-radius: 25px; 
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05); 
+  font-family: 'Fredoka', sans-serif; 
+  box-sizing: border-box; 
+}
+
+/* UPDATED: Flex container for the month header */
+.calendar-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+/* UPDATED: Month Title (No margins, fixed width) */
+.calendar-section h2 { 
+  font-size: 1.4rem; 
+  margin: 0; 
+  color: #57534e; 
+  text-align: center;
+  min-width: 150px; 
+}
+
+/* NEW: Previous/Next Buttons */
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a8a29e;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: #f5f5f4;
+  color: #57534e;
+  transform: scale(1.1);
+}
+
+.calendar-grid { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  gap: 4px; 
+  margin-bottom: 10px; 
+}
+
+.calendar-header { 
+  font-weight: 600; 
+  font-size: 0.7rem; 
+  color: #a8a29e; 
+  margin-bottom: 5px; 
+  text-transform: uppercase; 
+}
+
+.calendar-day { 
+  aspect-ratio: 1; 
+  border-radius: 10px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 0.85rem; 
+  font-weight: 500; 
+  color: #57534e; 
+  position: relative; 
+  transition: transform 0.1s; 
+}
+
+.calendar-icon-wrapper { 
+  transform: scale(0.7); 
+  margin-top: -2px; 
+}
+
+.calendar-day.has-data:hover { 
+  transform: scale(1.1); 
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+  z-index: 10; 
+}
 .calendar-day.empty { background: transparent !important; border: none !important; }
 
 /* --- Note Display --- */
-.note-display { width: 100%; margin-top: 15px; padding: 15px; background: #fdfbf7; border-radius: 15px; text-align: left; border: 2px dashed #e7e5e4; animation: fadeIn 0.3s ease; box-sizing: border-box; }
-.note-display strong { display: block; font-size: 0.8rem; color: #a8a29e; margin-bottom: 4px; text-transform: uppercase; font-family: 'Fredoka', sans-serif; letter-spacing: 0.5px; }
-.note-display p { font-family: 'Gaegu', cursive; font-size: 1.2rem; margin: 0; color: #57534e; }
+.note-display { 
+  width: 100%; 
+  margin-top: 15px; 
+  padding: 15px; 
+  background: #fdfbf7; 
+  border-radius: 15px; 
+  text-align: left; 
+  border: 2px dashed #e7e5e4; 
+  animation: fadeIn 0.3s ease; 
+  box-sizing: border-box; 
+}
+.note-display strong { 
+  display: block; 
+  font-size: 0.8rem; 
+  color: #a8a29e; 
+  margin-bottom: 4px; 
+  text-transform: uppercase; 
+  font-family: 'Fredoka', sans-serif; 
+  letter-spacing: 0.5px; 
+}
+.note-display p { 
+  font-family: 'Gaegu', cursive; 
+  font-size: 1.2rem; 
+  margin: 0; 
+  color: #57534e; 
+}
 
 /* --- Bottom Nav --- */
-.bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 30px; border-radius: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; gap: 30px; z-index: 100; }
-.bottom-nav button { background: none; border: none; cursor: pointer; color: #e5e7eb; transition: all 0.2s ease; padding: 5px; }
+.bottom-nav { 
+  position: fixed; 
+  bottom: 20px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background: white; 
+  padding: 10px 30px; 
+  border-radius: 40px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+  display: flex; 
+  gap: 30px; 
+  z-index: 100; 
+}
+.bottom-nav button { 
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  color: #e5e7eb; 
+  transition: all 0.2s ease; 
+  padding: 5px; 
+}
 .bottom-nav button.active { color: #57534e; transform: scale(1.1); }

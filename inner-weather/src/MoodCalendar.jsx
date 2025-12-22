@@ -1,38 +1,87 @@
 // src/MoodCalendar.jsx
 import React, { useState } from 'react';
 import { MOODS } from './moodConfig';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const MoodCalendar = ({ moodHistory }) => {
-  const [selectedNote, setSelectedNote] = useState(null);
+const MoodCalendar = ({ moodHistory, onDateClick }) => {
+  const [displayDate, setDisplayDate] = useState(new Date());
+  
+  // NEW: We track what the mouse is hovering over, not what is clicked
+  const [hoveredDateStr, setHoveredDateStr] = useState(null);
 
-  const today = new Date();
-  const currentMonth = today.getMonth(); 
-  const currentYear = today.getFullYear();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const year = displayDate.getFullYear();
+  const month = displayDate.getMonth();
+  
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const getMoodForDate = (day) => {
-    const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     return moodHistory[dateString];
   };
 
-  // UPDATED: Now accepts moodConfig to get the message
-  const handleDayClick = (day, moodData, moodConfig) => {
-    if (moodData && moodData.note) {
-      setSelectedNote({
-        date: `${today.toLocaleString('default', { month: 'long' })} ${day}`,
-        text: moodData.note,
-        moodMessage: moodConfig ? moodConfig.message : '' // Get the description
-      });
-    } else {
-      setSelectedNote(null);
+  const handleDayClick = (day) => {
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    // Only cycle the mood, don't worry about selecting for view
+    if (onDateClick) {
+      onDateClick(dateString);
     }
   };
 
+  const nextMonth = () => setDisplayDate(new Date(year, month + 1, 1));
+  const prevMonth = () => setDisplayDate(new Date(year, month - 1, 1));
+
+  // --- LOGIC: What text do we show in the bottom box? ---
+  const getDisplayContent = () => {
+    // Case 1: Mouse is NOT on a day
+    if (!hoveredDateStr) {
+      return {
+        header: "Forecast Details",
+        body: "Hover over a day to see your note.",
+        isPlaceholder: true
+      };
+    }
+
+    // Case 2: Mouse IS on a day, but there is no data
+    const data = moodHistory[hoveredDateStr];
+    
+    // Format the date nicely (e.g., "December 21")
+    const [y, m, d] = hoveredDateStr.split('-');
+    const dateObj = new Date(y, m - 1, d);
+    const niceDate = dateObj.toLocaleString('default', { month: 'long', day: 'numeric' });
+
+    if (!data) {
+      return {
+        header: niceDate,
+        body: "No forecast recorded.",
+        isPlaceholder: true
+      };
+    }
+
+    // Case 3: Mouse IS on a day with data
+    const config = MOODS.find(m => m.value === data.value);
+    return {
+      header: `${niceDate} • ${config ? config.message : ''}`,
+      body: data.note || "No note written for this day.",
+      isPlaceholder: false
+    };
+  };
+
+  const displayContent = getDisplayContent();
+
   return (
     <div className="calendar-container">
-      <h2>{today.toLocaleString('default', { month: 'long' })} {currentYear}</h2>
+      
+      <div className="calendar-nav-header">
+        <button onClick={prevMonth} className="nav-btn">
+          <ChevronLeft size={20} />
+        </button>
+        <h2>{displayDate.toLocaleString('default', { month: 'long' })} {year}</h2>
+        <button onClick={nextMonth} className="nav-btn">
+          <ChevronRight size={20} />
+        </button>
+      </div>
       
       <div className="calendar-grid">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
@@ -44,27 +93,26 @@ const MoodCalendar = ({ moodHistory }) => {
         ))}
 
         {daysArray.map(day => {
-          const moodData = getMoodForDate(day);
+          const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const moodData = moodHistory[dateString]; // Direct lookup
           const moodConfig = moodData ? MOODS.find(m => m.value === moodData.value) : null;
-          
-          // UPDATED: Get the specific icon component if data exists
           const IconComponent = moodConfig ? moodConfig.icon : null;
-
+          
           return (
             <div 
               key={day} 
               className={`calendar-day ${moodData ? 'has-data' : ''}`}
-              // UPDATED: Pass moodConfig to the handler
-              onClick={() => handleDayClick(day, moodData, moodConfig)}
+              onClick={() => handleDayClick(day)}
+              // NEW: Hover listeners
+              onMouseEnter={() => setHoveredDateStr(dateString)}
+              onMouseLeave={() => setHoveredDateStr(null)}
               style={{
                 backgroundColor: moodConfig ? moodConfig.color : 'transparent',
                 border: moodConfig ? `2px solid ${moodConfig.highlight}` : '1px solid #f0f0f0',
-                cursor: moodData ? 'pointer' : 'default'
+                cursor: 'pointer'
               }}
             >
               <span className="day-number">{day}</span>
-              
-              {/* UPDATED: Display the Icon instead of the dot */}
               {IconComponent && (
                 <div className="calendar-icon-wrapper">
                   <IconComponent size={20} color={moodConfig.highlight} />
@@ -75,16 +123,18 @@ const MoodCalendar = ({ moodHistory }) => {
         })}
       </div>
 
-      {/* UPDATED: Note Display Section */}
-      {selectedNote && (
-        <div className="note-display">
-          <strong>
-             {/* Matches your requested format: DATE • MOOD */}
-             {selectedNote.date} &bull; {selectedNote.moodMessage}
-          </strong>
-          <p>"{selectedNote.text}"</p>
-        </div>
-      )}
+      {/* --- ALWAYS VISIBLE NOTE BOX --- */}
+      <div 
+        className="note-display"
+        style={{ minHeight: '80px', transition: 'opacity 0.2s' }} // Prevent jumping
+      >
+        <strong style={{ opacity: displayContent.isPlaceholder ? 0.5 : 1 }}>
+          {displayContent.header}
+        </strong>
+        <p style={{ opacity: displayContent.isPlaceholder ? 0.6 : 1, fontStyle: displayContent.isPlaceholder ? 'italic' : 'normal' }}>
+          {displayContent.body}
+        </p>
+      </div>
     </div>
   );
 };
