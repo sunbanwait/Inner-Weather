@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "InnerWeather",
+  "version": "1.0",
+  "description": "Track your internal forecast.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Check InnerWeather"
+  },
+  "icons": {
+    "16": "windlogo2.png",
+    "48": "windlogo2.png",
+    "128": "windlogo2.png"
+  }
+}
