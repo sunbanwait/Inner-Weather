@@ -38,7 +38,6 @@ const MoodCalendar = ({ moodHistory, onDateClick }) => {
     if (!hoveredDateStr) {
       return {
         header: "Forecast Details",
-        body: "Hover over a day to see your note.",
         isPlaceholder: true
       };
     }
@@ -108,7 +107,8 @@ const MoodCalendar = ({ moodHistory, onDateClick }) => {
               onMouseLeave={() => setHoveredDateStr(null)}
               style={{
                 backgroundColor: moodConfig ? moodConfig.color : 'transparent',
-                border: moodConfig ? `2px solid ${moodConfig.highlight}` : '1px solid #f0f0f0',
+                /* FIXED: Both conditions now use 2px solid to prevent jumping size */
+                border: moodConfig ? `2px solid ${moodConfig.highlight}` : '2px solid #f0f0f0',
                 cursor: 'pointer'
               }}
             >
